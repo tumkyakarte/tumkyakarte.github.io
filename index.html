@@ -388,5 +388,27 @@ dialog p{color:var(--muted);text-align:center;margin-top:8px;font-size:.9rem}
   vids.forEach(function(v){ v.addEventListener('play',function(){ vids.forEach(function(o){ if(o!==v) o.pause(); }); }); });
 })();
 </script>
+<script>
+// GoatCounter: count button taps, reel plays and screenshot opens as events (stats at tumkyakarte.goatcounter.com)
+(function(){
+  function gc(path, title){ try{ if(window.goatcounter && window.goatcounter.count) window.goatcounter.count({path:path, title:title||path, event:true}); }catch(e){} }
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a'); if(!a) return;
+    var h = a.getAttribute('href') || '';
+    var where = a.closest('header') ? 'topbar' : a.closest('footer') ? 'footer' : ((a.closest('[id]') || {}).id || 'page');
+    var kind = h.indexOf('youtube') > -1 ? 'youtube' : h.indexOf('ig.me') > -1 ? 'dm' : h.indexOf('instagram.com') > -1 ? 'instagram'
+             : h.indexOf('mailto:') === 0 ? 'email' : h.indexOf('.pdf') > -1 ? 'media-kit' : h.charAt(0) === '#' ? 'jump-' + h.slice(1) : 'link';
+    gc('click-' + kind + '-' + where, (a.textContent || '').trim().slice(0, 60));
+  });
+  document.querySelectorAll('video').forEach(function(v){
+    var done = false, name = (v.getAttribute('src') || '').split('/').pop().replace('.mp4', '');
+    v.addEventListener('play', function(){ if(done) return; done = true; gc('play-' + name, 'Reel played: ' + name); });
+  });
+  document.querySelectorAll('.shot').forEach(function(b){
+    b.addEventListener('click', function(){ gc('open-insights-' + (b.dataset.full || '').split('/').pop().replace('.jpg', ''), 'Insights screenshot opened'); });
+  });
+})();
+</script>
+<script data-goatcounter="https://tumkyakarte.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
